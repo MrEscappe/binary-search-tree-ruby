@@ -1,2 +1,4 @@
-# binary-search-tree-ruby
-Binary Search Tree in Ruby
+# Binary Search Tree in Ruby
+
+Part of [The Odin Project](https://www.theodinproject.com/)
+
