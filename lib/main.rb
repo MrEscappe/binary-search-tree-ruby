@@ -72,11 +72,96 @@ class Tree
     current
   end
 
-  def search(value, root = @root)
+  def find(value, root = @root)
     return nil if root.nil?
     return root if root.data == value
 
-    root.data < value ? search(value, root.right) : search(value, root.left)
+    root.data < value ? find(value, root.right) : find(value, root.left)
+  end
+
+  def level_order(root = @root, queue = [])
+    return root if root.nil?
+
+    arr = []
+    queue << root
+    while queue.length.positive?
+      arr << queue[0].data
+      root = queue.shift
+
+      queue << root.left unless root.left.nil?
+
+      queue << root.right unless root.right.nil?
+    end
+    arr
+  end
+
+  def inorder(root = @root, arr = [])
+    return root if root.nil?
+
+    unless root.nil?
+      inorder(root.left, arr)
+      arr << root.data
+      inorder(root.right, arr)
+    end
+    arr
+  end
+
+  def preorder(root = @root, arr = [])
+    return root if root.nil?
+
+    unless root.nil?
+      arr << root.data
+      preorder(root.left, arr)
+      preorder(root.right, arr)
+    end
+    arr
+  end
+
+  def postorder(root = @root, arr = [])
+    return root if root.nil?
+
+    unless root.nil?
+      postorder(root.left, arr)
+      postorder(root.right, arr)
+      arr << root.data
+    end
+    arr
+  end
+
+  def height(root = @root)
+    return 0 if root.nil?
+
+    [height(root.left), height(root.right)].max + 1
+  end
+
+  def depth(root = @root)
+    return 0 if root.nil?
+
+    left_depth = depth(root.left)
+    right_depth = depth(root.right)
+
+    if left_depth > right_depth
+      left_depth + 1
+    else
+      right_depth + 1
+    end
+  end
+
+  def balanced?(root = @root)
+    return true if root.nil?
+
+    left_height = height(root.left)
+    right_height = height(root.right)
+
+    if (left_height.abs - right_height.abs <= 1) && balanced?(root.left) == true && balanced?(root.right) == true
+      true
+    else
+      false
+    end
+  end
+
+  def rebalance
+    @root = build_tree(level_order)
   end
 
   def sort_arr(arr)
@@ -92,10 +177,37 @@ end
 
 array = Array.new(10) { rand(1..100) }
 
-li = Tree.new(array)
+tree = Tree.new(array)
 
-li.pretty_print
+puts "The tree is balanced? #{tree.balanced?}"
+puts ''
+puts tree.pretty_print
+puts ''
+print tree.level_order
+puts ''
+print tree.preorder
+puts ''
+print tree.postorder
+puts ''
+print tree.inorder
+puts ''
+100.times do
+  tree.insert(rand(1..100))
+end
 
-li.insert(90)
-
-li.pretty_print
+puts "The tree is balanced? #{tree.balanced?}"
+puts ''
+puts tree.pretty_print
+puts ''
+tree.rebalance
+puts "The tree is balanced? #{tree.balanced?}"
+puts ''
+puts tree.pretty_print
+puts ''
+print tree.level_order
+puts ''
+print tree.preorder
+puts ''
+print tree.postorder
+puts ''
+print tree.inorder
